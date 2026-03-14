@@ -3,10 +3,6 @@ from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 import yfinance as yf
 
 import os
-from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
-import yfinance as yf
-
 TOKEN = os.getenv("6561701841:AAGxOFKrQ_ULb0i73D3ZVfo9uF-CBrd3mv8")  # replace with your BotFather token
 
 # /start command
