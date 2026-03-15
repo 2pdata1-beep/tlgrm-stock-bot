@@ -3,24 +3,34 @@ import yfinance as yf
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-# Get token from environment variable
-TOKEN = os.getenv("6561701841:AAGxOFKrQ_ULb0i73D3ZVfo9uF-CBrd3mv8")
+# Read the bot token from Railway environment variable
+TOKEN = os.getenv("BOT_TOKEN")
 
-# STOP if token is missing
+# Stop if token is missing
 if not TOKEN:
-    print("❌ ERROR: BOT_TOKEN not found! Add it in Railway Variables exactly as 'BOT_TOKEN'.")
+    print("❌ ERROR: BOT_TOKEN not found! Add it in Railway Variables.")
     exit(1)
+
 
 # /start command
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "Hello! 👋\n\nSend a command like:\n/price AAPL"
+        "Hello! 👋\n\n"
+        "I can show stock prices.\n\n"
+        "Example:\n"
+        "/price AAPL\n"
+        "/price TSLA\n"
+        "/price BTC-USD"
     )
+
 
 # /price command
 async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     if len(context.args) == 0:
-        await update.message.reply_text("Usage: /price SYMBOL\nExample: /price AAPL")
+        await update.message.reply_text(
+            "Usage:\n/price SYMBOL\nExample: /price AAPL"
+        )
         return
 
     symbol = context.args[0].upper()
@@ -34,18 +44,29 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return
 
         price = data["Close"].iloc[-1]
-        await update.message.reply_text(f"📈 {symbol} price: ${price:.2f}")
+
+        await update.message.reply_text(
+            f"📈 {symbol} price: ${price:.2f}"
+        )
 
     except Exception as e:
-        await update.message.reply_text(f"Error getting price for {symbol}.")
+        await update.message.reply_text(
+            f"⚠️ Error getting price for {symbol}."
+        )
 
-# Main
+
+# Main function
 def main():
+
     app = ApplicationBuilder().token(TOKEN).build()
+
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("price", price))
+
     print("✅ Bot is running...")
+
     app.run_polling()
+
 
 if __name__ == "__main__":
     main()
